@@ -47,9 +47,64 @@ const loginMessage = document.getElementById("loginMessage");
 
 const ALLOWED_EFFECTS = ["snow", "flower", "leaf", "gem"];
 
+const THEME_PRESETS = {
+    "netha-original": {
+        name: "NETHA Original",
+        themeColor: "#00d9ff",
+        accentColor: "#a855f7",
+        background: "#090713",
+        panel: "#171327",
+        border: "#34304a",
+        text: "#f1efff"
+    },
+
+    "neon-blue": {
+        name: "Neon Blue",
+        themeColor: "#3985ff",
+        accentColor: "#00e5ff",
+        background: "#080d19",
+        panel: "#111c30",
+        border: "#29476e",
+        text: "#edf6ff"
+    },
+
+    "emerald": {
+        name: "Emerald",
+        themeColor: "#00d68f",
+        accentColor: "#65ffbf",
+        background: "#07130f",
+        panel: "#10231c",
+        border: "#285442",
+        text: "#edfff6"
+    },
+
+    "ruby-red": {
+        name: "Ruby Red",
+        themeColor: "#ff3867",
+        accentColor: "#ff78a5",
+        background: "#160910",
+        panel: "#28121d",
+        border: "#633044",
+        text: "#fff0f5"
+    },
+
+    "golden": {
+        name: "Golden",
+        themeColor: "#ffbd35",
+        accentColor: "#ff8c32",
+        background: "#151006",
+        panel: "#282013",
+        border: "#66502b",
+        text: "#fff8e8"
+    }
+};
+
 const defaultSettings = {
+    themePreset: "netha-original",
+
     themeColor: "#00d9ff",
     accentColor: "#a855f7",
+
     backgroundStyle: "midnight",
     animations: true,
     glowIntensity: 50,
@@ -101,13 +156,30 @@ function normalizeSettings(settings = {}) {
         ...defaultSettings,
         ...settings,
 
-        themeColor: /^#[0-9a-fA-F]{6}$/.test(settings.themeColor || "")
-            ? settings.themeColor
-            : defaultSettings.themeColor,
+        themePreset: Object.prototype.hasOwnProperty.call(
+    THEME_PRESETS,
+    settings.themePreset
+)
+    ? settings.themePreset
+    : "netha-original",
 
-        accentColor: /^#[0-9a-fA-F]{6}$/.test(settings.accentColor || "")
-            ? settings.accentColor
-            : defaultSettings.accentColor,
+themeColor: THEME_PRESETS[
+    Object.prototype.hasOwnProperty.call(
+        THEME_PRESETS,
+        settings.themePreset
+    )
+        ? settings.themePreset
+        : "netha-original"
+].themeColor,
+
+accentColor: THEME_PRESETS[
+    Object.prototype.hasOwnProperty.call(
+        THEME_PRESETS,
+        settings.themePreset
+    )
+        ? settings.themePreset
+        : "netha-original"
+].accentColor,
 
         backgroundStyle: ["midnight", "dark", "gradient"].includes(
             settings.backgroundStyle
@@ -218,37 +290,26 @@ function renderDashboard(user) {
             </div>
 
             <div class="setting-card full-card">
-                <div class="setting-row">
-                    <div>
-                        <label for="animations">Animations</label>
-                        <p>Enable or disable visual animations</p>
-                    </div>
+    <label for="themePreset">Choose App Theme</label>
+    <p>Select one of the five NETHA X themes</p>
 
-                    <label class="switch">
-                        <input type="checkbox" id="animations">
-                        <span class="switch-track"></span>
-                    </label>
-                </div>
-            </div>
+    <select id="themePreset">
+        <option value="netha-original">NETHA Original</option>
+        <option value="neon-blue">Neon Blue</option>
+        <option value="emerald">Emerald</option>
+        <option value="ruby-red">Ruby Red</option>
+        <option value="golden">Golden</option>
+    </select>
 
-            <div class="setting-card full-card">
-                <label for="glowIntensity">
-                    Glow Intensity
-                    <strong id="glowValue">50%</strong>
-                </label>
-
-                <p>Adjust the visual glow strength</p>
-
-                <input
-                    type="range"
-                    id="glowIntensity"
-                    min="0"
-                    max="100"
-                    value="50"
-                >
-            </div>
-
+    <div id="themePresetPreview" class="theme-preset-preview">
+        <div class="theme-preview-colors">
+            <span id="themePreviewPrimary"></span>
+            <span id="themePreviewAccent"></span>
         </div>
+        <strong id="themePreviewName">NETHA Original</strong>
+        <span>Theme Preview</span>
+    </div>
+</div>
 
         <!-- FALLING EFFECTS CONTROL -->
 
