@@ -47,6 +47,7 @@ const loginMessage = document.getElementById("loginMessage");
 
 const ALLOWED_EFFECTS = ["snow", "flower", "leaf", "gem"];
 
+// THEME PRESETS
 const THEME_PRESETS = {
     "netha-original": {
         name: "NETHA Original",
@@ -99,9 +100,9 @@ const THEME_PRESETS = {
     }
 };
 
+// DEFAULT SETTINGS
 const defaultSettings = {
     themePreset: "netha-original",
-
     themeColor: "#00d9ff",
     accentColor: "#a855f7",
 
@@ -120,22 +121,18 @@ const defaultSettings = {
 
 let currentSettings = { ...defaultSettings };
 
+// LOGIN ERROR
 function showLoginError(message) {
     loginMessage.textContent = message;
 }
 
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[character]);
-}
-
-// Validate remote settings before using them
+// NORMALIZE SETTINGS
 function normalizeSettings(settings = {}) {
+
+    if (!settings || typeof settings !== "object") {
+        settings = {};
+    }
+
     const savedEffects =
         settings.fallingEffects &&
         typeof settings.fallingEffects === "object"
@@ -152,42 +149,38 @@ function normalizeSettings(settings = {}) {
     const density = Number(savedEffects.density);
     const glow = Number(settings.glowIntensity);
 
+    const themePreset = Object.prototype.hasOwnProperty.call(
+        THEME_PRESETS,
+        settings.themePreset
+    )
+        ? settings.themePreset
+        : "netha-original";
+
+    const selectedTheme = THEME_PRESETS[themePreset];
+
     return {
         ...defaultSettings,
         ...settings,
 
-        themePreset: Object.prototype.hasOwnProperty.call(
-    THEME_PRESETS,
-    settings.themePreset
-)
-    ? settings.themePreset
-    : "netha-original",
+        themePreset: themePreset,
+        themeColor: selectedTheme.themeColor,
+        accentColor: selectedTheme.accentColor,
 
-themeColor: THEME_PRESETS[
-    Object.prototype.hasOwnProperty.call(
-        THEME_PRESETS,
-        settings.themePreset
-    )
-        ? settings.themePreset
-        : "netha-original"
-].themeColor,
+        backgroundStyle: [
+            "midnight",
+            "dark",
+            "gradient"
+        ].includes(settings.backgroundStyle)
+            ? settings.backgroundStyle
+            : defaultSettings.backgroundStyle,
 
-accentColor: THEME_PRESETS[
-    Object.prototype.hasOwnProperty.call(
-        THEME_PRESETS,
-        settings.themePreset
-    )
-        ? settings.themePreset
-        : "netha-original"
-].accentColor,
-
-        backgroundStyle: ["midnight", "dark", "gradient"].includes(
-            settings.backgroundStyle
-        ) ? settings.backgroundStyle : "midnight",
-
-        buttonStyle: ["gradient", "solid", "outline"].includes(
-            settings.buttonStyle
-        ) ? settings.buttonStyle : "gradient",
+        buttonStyle: [
+            "gradient",
+            "solid",
+            "outline"
+        ].includes(settings.buttonStyle)
+            ? settings.buttonStyle
+            : defaultSettings.buttonStyle,
 
         animations: typeof settings.animations === "boolean"
             ? settings.animations
@@ -215,7 +208,9 @@ accentColor: THEME_PRESETS[
     };
 }
 
+// DASHBOARD
 function renderDashboard(user) {
+
     dashboardScreen.innerHTML = `
         <div class="dashboard-header">
             <div>
@@ -223,7 +218,9 @@ function renderDashboard(user) {
                     <span class="brand-icon">NX</span>
                     <div>
                         <h1>NETHA X ADMIN</h1>
-                        <p class="dashboard-subtitle">ULTIMATE CONTROL PANEL</p>
+                        <p class="dashboard-subtitle">
+                            ULTIMATE CONTROL PANEL
+                        </p>
                     </div>
                 </div>
             </div>
@@ -236,9 +233,15 @@ function renderDashboard(user) {
         <div class="welcome-panel">
             <div>
                 <span class="status-dot"></span>
-                <span class="online-label">ADMIN SESSION ACTIVE</span>
+                <span class="online-label">
+                    ADMIN SESSION ACTIVE
+                </span>
+
                 <h2>Dashboard Overview</h2>
-                <p>Manage the visual appearance of NETHA X ULTIMATE.</p>
+
+                <p>
+                    Manage the visual appearance of NETHA X ULTIMATE.
+                </p>
             </div>
 
             <div class="admin-account">
@@ -246,6 +249,8 @@ function renderDashboard(user) {
                 <strong id="adminEmailDisplay"></strong>
             </div>
         </div>
+
+        <!-- APPEARANCE CONTROL -->
 
         <div class="section-heading">
             <span>01</span>
@@ -257,21 +262,65 @@ function renderDashboard(user) {
 
         <div class="settings-grid">
 
-            <div class="setting-card">
-                <label for="themeColor">Primary Theme Color</label>
-                <p>Main highlight color</p>
-                <input type="color" id="themeColor">
+            <!-- THEME PRESETS -->
+
+            <div class="setting-card full-card">
+                <label for="themePreset">
+                    Choose App Theme
+                </label>
+
+                <p>
+                    Select one of the five NETHA X themes
+                </p>
+
+                <select id="themePreset">
+                    <option value="netha-original">
+                        NETHA Original
+                    </option>
+
+                    <option value="neon-blue">
+                        Neon Blue
+                    </option>
+
+                    <option value="emerald">
+                        Emerald
+                    </option>
+
+                    <option value="ruby-red">
+                        Ruby Red
+                    </option>
+
+                    <option value="golden">
+                        Golden
+                    </option>
+                </select>
+
+                <div
+                    id="themePresetPreview"
+                    class="theme-preset-preview"
+                >
+                    <div class="theme-preview-colors">
+                        <span id="themePreviewPrimary"></span>
+                        <span id="themePreviewAccent"></span>
+                    </div>
+
+                    <strong id="themePreviewName">
+                        NETHA Original
+                    </strong>
+
+                    <span>THEME PREVIEW</span>
+                </div>
             </div>
 
-            <div class="setting-card">
-                <label for="accentColor">Accent Color</label>
-                <p>Secondary highlight color</p>
-                <input type="color" id="accentColor">
-            </div>
+            <!-- BACKGROUND STYLE -->
 
             <div class="setting-card">
-                <label for="backgroundStyle">Background Style</label>
+                <label for="backgroundStyle">
+                    Background Style
+                </label>
+
                 <p>Choose the app background</p>
+
                 <select id="backgroundStyle">
                     <option value="midnight">Midnight</option>
                     <option value="dark">Dark</option>
@@ -279,9 +328,15 @@ function renderDashboard(user) {
                 </select>
             </div>
 
+            <!-- BUTTON STYLE -->
+
             <div class="setting-card">
-                <label for="buttonStyle">Button Style</label>
+                <label for="buttonStyle">
+                    Button Style
+                </label>
+
                 <p>Choose button appearance</p>
+
                 <select id="buttonStyle">
                     <option value="gradient">Gradient</option>
                     <option value="solid">Solid</option>
@@ -289,27 +344,50 @@ function renderDashboard(user) {
                 </select>
             </div>
 
+            <!-- ANIMATIONS -->
+
             <div class="setting-card full-card">
-    <label for="themePreset">Choose App Theme</label>
-    <p>Select one of the five NETHA X themes</p>
+                <div class="setting-row">
+                    <div>
+                        <label for="animations">
+                            App Animations
+                        </label>
 
-    <select id="themePreset">
-        <option value="netha-original">NETHA Original</option>
-        <option value="neon-blue">Neon Blue</option>
-        <option value="emerald">Emerald</option>
-        <option value="ruby-red">Ruby Red</option>
-        <option value="golden">Golden</option>
-    </select>
+                        <p>Enable or disable app animations</p>
+                    </div>
 
-    <div id="themePresetPreview" class="theme-preset-preview">
-        <div class="theme-preview-colors">
-            <span id="themePreviewPrimary"></span>
-            <span id="themePreviewAccent"></span>
+                    <label class="switch">
+                        <input
+                            type="checkbox"
+                            id="animations"
+                            checked
+                        >
+
+                        <span class="switch-track"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- GLOW INTENSITY -->
+
+            <div class="setting-card full-card">
+                <label for="glowIntensity">
+                    Glow Intensity
+                    <strong id="glowValue">50%</strong>
+                </label>
+
+                <p>Adjust the visual glow intensity</p>
+
+                <input
+                    type="range"
+                    id="glowIntensity"
+                    min="0"
+                    max="100"
+                    value="50"
+                >
+            </div>
+
         </div>
-        <strong id="themePreviewName">NETHA Original</strong>
-        <span>Theme Preview</span>
-    </div>
-</div>
 
         <!-- FALLING EFFECTS CONTROL -->
 
@@ -317,7 +395,9 @@ function renderDashboard(user) {
             <span>02</span>
             <div>
                 <h2>Falling Effects Control</h2>
-                <p>Manage animated foreground effects in the app</p>
+                <p>
+                    Manage animated foreground effects in the app
+                </p>
             </div>
         </div>
 
@@ -329,7 +409,10 @@ function renderDashboard(user) {
                         <label for="fallingEffectsEnabled">
                             Falling Effects
                         </label>
-                        <p>Enable or disable all falling effects</p>
+
+                        <p>
+                            Enable or disable all falling effects
+                        </p>
                     </div>
 
                     <label class="switch">
@@ -337,6 +420,7 @@ function renderDashboard(user) {
                             type="checkbox"
                             id="fallingEffectsEnabled"
                         >
+
                         <span class="switch-track"></span>
                     </label>
                 </div>
@@ -344,28 +428,49 @@ function renderDashboard(user) {
 
             <div class="setting-card full-card">
                 <label>Choose Effects</label>
-                <p>You can enable multiple effects together</p>
+
+                <p>
+                    You can enable multiple effects together
+                </p>
 
                 <div class="effects-options">
+
                     <label class="effect-option">
-                        <input type="checkbox" name="fallingEffect" value="snow">
+                        <input
+                            type="checkbox"
+                            name="fallingEffect"
+                            value="snow"
+                        >
                         <span>❄️ Snow</span>
                     </label>
 
                     <label class="effect-option">
-                        <input type="checkbox" name="fallingEffect" value="flower">
+                        <input
+                            type="checkbox"
+                            name="fallingEffect"
+                            value="flower"
+                        >
                         <span>🌸 Flowers</span>
                     </label>
 
                     <label class="effect-option">
-                        <input type="checkbox" name="fallingEffect" value="leaf">
+                        <input
+                            type="checkbox"
+                            name="fallingEffect"
+                            value="leaf"
+                        >
                         <span>🍂 Leaves</span>
                     </label>
 
                     <label class="effect-option">
-                        <input type="checkbox" name="fallingEffect" value="gem">
+                        <input
+                            type="checkbox"
+                            name="fallingEffect"
+                            value="gem"
+                        >
                         <span>💎 Gems</span>
                     </label>
+
                 </div>
             </div>
 
@@ -392,7 +497,9 @@ function renderDashboard(user) {
                     <strong id="effectDensityValue">30%</strong>
                 </label>
 
-                <p>Adjust how many effects appear on screen</p>
+                <p>
+                    Adjust how many effects appear on screen
+                </p>
 
                 <input
                     type="range"
@@ -405,34 +512,57 @@ function renderDashboard(user) {
 
         </div>
 
+        <!-- APPEARANCE PREVIEW -->
+
         <div class="preview-panel">
             <div class="preview-heading">
                 <div>
                     <h2>Appearance Preview</h2>
-                    <p>Preview the selected dashboard settings</p>
+                    <p>
+                        Preview the selected dashboard settings
+                    </p>
                 </div>
 
-                <span class="preview-indicator">LIVE PREVIEW</span>
+                <span class="preview-indicator">
+                    LIVE PREVIEW
+                </span>
             </div>
 
-            <div id="appearancePreview" class="appearance-preview">
+            <div
+                id="appearancePreview"
+                class="appearance-preview"
+            >
                 <div class="preview-logo">NX</div>
+
                 <h3>NETHA X ULTIMATE</h3>
+
                 <p>YOUR APP APPEARANCE PREVIEW</p>
-                <button type="button" id="previewButton">
+
+                <button
+                    type="button"
+                    id="previewButton"
+                >
                     PREVIEW BUTTON
                 </button>
             </div>
         </div>
 
+        <!-- SAVE SETTINGS -->
+
         <div class="save-area">
             <p id="saveMessage" role="status"></p>
 
-            <button type="button" id="saveSettingsButton">
+            <button
+                type="button"
+                id="saveSettingsButton"
+            >
                 SAVE APPEARANCE SETTINGS
             </button>
 
-            <button type="button" id="resetSettingsButton">
+            <button
+                type="button"
+                id="resetSettingsButton"
+            >
                 RESET TO DEFAULTS
             </button>
         </div>
@@ -458,20 +588,27 @@ function renderDashboard(user) {
     loadAppearanceSettings();
 }
 
+// CONNECT CONTROLS
 function connectAppearanceControls() {
+
     const ids = [
-    "themePreset",
-    "backgroundStyle",
-    "buttonStyle",
-    "animations",
-    "glowIntensity",
-    "fallingEffectsEnabled",
-    "effectSpeed",
-    "effectDensity"
-];
+        "themePreset",
+        "backgroundStyle",
+        "buttonStyle",
+        "animations",
+        "glowIntensity",
+        "fallingEffectsEnabled",
+        "effectSpeed",
+        "effectDensity"
+    ];
 
     ids.forEach(id => {
         const element = document.getElementById(id);
+
+        if (!element) {
+            console.error("Missing dashboard element:", id);
+            return;
+        }
 
         element.addEventListener("input", updatePreview);
         element.addEventListener("change", updatePreview);
@@ -487,6 +624,7 @@ function connectAppearanceControls() {
 
     document.getElementById("resetSettingsButton")
         .addEventListener("click", () => {
+
             applySettings(defaultSettings);
             updatePreview();
 
@@ -499,57 +637,66 @@ function connectAppearanceControls() {
     updatePreview();
 }
 
+// READ SETTINGS
 function readSettingsFromControls() {
+
     const selectedEffects = Array.from(
         document.querySelectorAll(
             'input[name="fallingEffect"]:checked'
         )
     ).map(element => element.value);
 
+    const themePreset =
+        document.getElementById("themePreset").value;
+
+    const selectedTheme =
+        THEME_PRESETS[themePreset] ||
+        THEME_PRESETS["netha-original"];
+
     return {
-        const themePreset = document.getElementById("themePreset").value;
-const selectedTheme = THEME_PRESETS[themePreset] ||
-    THEME_PRESETS["netha-original"];
+        themePreset: themePreset,
 
-return {
-    themePreset: themePreset,
+        themeColor: selectedTheme.themeColor,
+        accentColor: selectedTheme.accentColor,
 
-    themeColor: selectedTheme.themeColor,
-    accentColor: selectedTheme.accentColor,
+        backgroundStyle:
+            document.getElementById("backgroundStyle").value,
 
-    backgroundStyle: document.getElementById("backgroundStyle").value,
-    buttonStyle: document.getElementById("buttonStyle").value,
+        buttonStyle:
+            document.getElementById("buttonStyle").value,
 
-    animations: document.getElementById("animations").checked,
+        animations:
+            document.getElementById("animations").checked,
 
-    glowIntensity: Number(
-        document.getElementById("glowIntensity").value
-    ),
-
-    fallingEffects: {
-        enabled: document.getElementById(
-            "fallingEffectsEnabled"
-        ).checked,
-
-        types: selectedEffects,
-
-        speed: Number(
-            document.getElementById("effectSpeed").value
+        glowIntensity: Number(
+            document.getElementById("glowIntensity").value
         ),
 
-        density: Number(
-            document.getElementById("effectDensity").value
-        )
-    }
- };
+        fallingEffects: {
+            enabled: document.getElementById(
+                "fallingEffectsEnabled"
+            ).checked,
 
+            types: selectedEffects,
+
+            speed: Number(
+                document.getElementById("effectSpeed").value
+            ),
+
+            density: Number(
+                document.getElementById("effectDensity").value
+            )
+        }
+    };
 }
 
+// APPLY SETTINGS TO CONTROLS
 function applySettings(settings) {
+
     const merged = normalizeSettings(settings);
 
     document.getElementById("themePreset").value =
-    merged.themePreset;
+        merged.themePreset;
 
     document.getElementById("backgroundStyle").value =
         merged.backgroundStyle;
@@ -590,11 +737,17 @@ function applySettings(settings) {
     currentSettings = merged;
 }
 
+// UPDATE LIVE PREVIEW
 function updatePreview() {
+
     const settings = readSettingsFromControls();
 
     const preview = document.getElementById("appearancePreview");
     const previewButton = document.getElementById("previewButton");
+
+    const selectedTheme =
+        THEME_PRESETS[settings.themePreset] ||
+        THEME_PRESETS["netha-original"];
 
     document.getElementById("glowValue").textContent =
         `${settings.glowIntensity}%`;
@@ -605,13 +758,56 @@ function updatePreview() {
     document.getElementById("effectDensityValue").textContent =
         `${settings.fallingEffects.density}%`;
 
-    preview.style.setProperty("--preview-primary", settings.themeColor);
-    preview.style.setProperty("--preview-accent", settings.accentColor);
+    // Theme preview colors
+    document.getElementById("themePreviewPrimary").style.background =
+        selectedTheme.themeColor;
+
+    document.getElementById("themePreviewAccent").style.background =
+        selectedTheme.accentColor;
+
+    document.getElementById("themePreviewName").textContent =
+        selectedTheme.name;
+
+    // Main preview colors
+    preview.style.setProperty(
+        "--preview-primary",
+        selectedTheme.themeColor
+    );
+
+    preview.style.setProperty(
+        "--preview-accent",
+        selectedTheme.accentColor
+    );
+
+    preview.style.setProperty(
+        "--preview-bg",
+        selectedTheme.background
+    );
+
+    preview.style.setProperty(
+        "--preview-panel",
+        selectedTheme.panel
+    );
+
+    preview.style.setProperty(
+        "--preview-border",
+        selectedTheme.border
+    );
+
+    preview.style.setProperty(
+        "--preview-text",
+        selectedTheme.text
+    );
 
     preview.style.setProperty(
         "--preview-glow",
         settings.glowIntensity / 100
     );
+
+    // Direct preview styling
+    preview.style.backgroundColor = selectedTheme.panel;
+    preview.style.color = selectedTheme.text;
+    preview.style.borderColor = selectedTheme.border;
 
     preview.classList.toggle(
         "no-animation",
@@ -622,48 +818,24 @@ function updatePreview() {
     previewButton.dataset.style = settings.buttonStyle;
 }
 
-const selectedTheme = THEME_PRESETS[settings.themePreset];
-
-document.getElementById("themePreviewPrimary").style.background =
-    selectedTheme.themeColor;
-
-document.getElementById("themePreviewAccent").style.background =
-    selectedTheme.accentColor;
-
-document.getElementById("themePreviewName").textContent =
-    selectedTheme.name;
-
-preview.style.setProperty(
-    "--preview-bg",
-    selectedTheme.background
-);
-
-preview.style.setProperty(
-    "--preview-panel",
-    selectedTheme.panel
-);
-
-preview.style.setProperty(
-    "--preview-border",
-    selectedTheme.border
-);
-
-preview.style.setProperty(
-    "--preview-text",
-    selectedTheme.text
-);
-
+// SAVE MESSAGE
 function setSaveMessage(message, isError) {
+
     const element = document.getElementById("saveMessage");
 
     element.textContent = message;
-    element.className = isError ? "save-error" : "save-success";
+    element.className = isError
+        ? "save-error"
+        : "save-success";
 }
 
+// LOAD SETTINGS FROM FIRESTORE
 async function loadAppearanceSettings() {
+
     setSaveMessage("Loading saved settings...", false);
 
     try {
+
         const snapshot = await getDoc(appearanceRef);
 
         if (snapshot.exists()) {
@@ -674,9 +846,13 @@ async function loadAppearanceSettings() {
 
         updatePreview();
 
-        setSaveMessage("Appearance settings loaded.", false);
+        setSaveMessage(
+            "Appearance settings loaded.",
+            false
+        );
 
     } catch (error) {
+
         console.error("Settings load error:", error);
 
         applySettings(defaultSettings);
@@ -689,12 +865,22 @@ async function loadAppearanceSettings() {
     }
 }
 
+// SAVE SETTINGS TO FIRESTORE
 async function saveAppearanceSettings() {
+
     const button = document.getElementById("saveSettingsButton");
-    const settings = normalizeSettings(readSettingsFromControls());
+
+    const settings = normalizeSettings(
+        readSettingsFromControls()
+    );
 
     if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
-        setSaveMessage("Admin authorization required.", true);
+
+        setSaveMessage(
+            "Admin authorization required.",
+            true
+        );
+
         return;
     }
 
@@ -702,10 +888,13 @@ async function saveAppearanceSettings() {
     button.textContent = "SAVING...";
 
     try {
+
         await setDoc(appearanceRef, {
             ...settings,
             updatedAt: serverTimestamp()
-        }, { merge: true });
+        }, {
+            merge: true
+        });
 
         currentSettings = settings;
 
@@ -715,6 +904,7 @@ async function saveAppearanceSettings() {
         );
 
     } catch (error) {
+
         console.error("Settings save error:", error);
 
         setSaveMessage(
@@ -723,40 +913,64 @@ async function saveAppearanceSettings() {
         );
 
     } finally {
+
         button.disabled = false;
         button.textContent = "SAVE APPEARANCE SETTINGS";
     }
 }
 
-// Login
+// LOGIN
 loginForm.addEventListener("submit", async event => {
+
     event.preventDefault();
 
-    const email = document.getElementById("adminEmail").value.trim();
-    const password = document.getElementById("adminPassword").value;
+    const email =
+        document.getElementById("adminEmail").value.trim();
+
+    const password =
+        document.getElementById("adminPassword").value;
 
     if (!email || !password) {
-        showLoginError("Enter your email and password.");
+
+        showLoginError(
+            "Enter your email and password."
+        );
+
         return;
     }
 
     loginButton.disabled = true;
     loginButton.textContent = "SIGNING IN...";
+
     showLoginError("");
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
     } catch (error) {
+
         const messages = {
-            "auth/invalid-credential": "Incorrect email or password.",
-            "auth/invalid-email": "Invalid email address.",
-            "auth/user-disabled": "This account is disabled.",
-            "auth/too-many-requests": "Too many attempts. Try again later."
+            "auth/invalid-credential":
+                "Incorrect email or password.",
+
+            "auth/invalid-email":
+                "Invalid email address.",
+
+            "auth/user-disabled":
+                "This account is disabled.",
+
+            "auth/too-many-requests":
+                "Too many attempts. Try again later."
         };
 
         showLoginError(
-            messages[error.code] || "Login failed. Please try again."
+            messages[error.code] ||
+            "Login failed. Please try again."
         );
 
         loginButton.disabled = false;
@@ -764,9 +978,11 @@ loginForm.addEventListener("submit", async event => {
     }
 });
 
-// Authentication State
+// AUTHENTICATION STATE
 onAuthStateChanged(auth, async user => {
+
     if (!user) {
+
         loginScreen.hidden = false;
         dashboardScreen.hidden = true;
 
@@ -774,17 +990,20 @@ onAuthStateChanged(auth, async user => {
         loginButton.textContent = "LOGIN TO DASHBOARD";
 
         loginForm.reset();
+
         showLoginError("");
 
         return;
     }
 
     if (user.uid !== ADMIN_UID) {
+
         showLoginError(
             "This account is not authorized as administrator."
         );
 
         await signOut(auth);
+
         return;
     }
 
