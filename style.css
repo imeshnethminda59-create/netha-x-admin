@@ -711,3 +711,190 @@ button {
         grid-template-columns: 1fr;
     }
 }
+
+/* ========================================
+   NETHA X THEME PRESETS - LIVE PREVIEW
+======================================== */
+
+/* Theme Preset Preview Card */
+
+.theme-preset-preview {
+    width: 100%;
+    min-height: 85px;
+    margin-top: 15px;
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border: 1px solid #34304a;
+    border-radius: 10px;
+    background: #080d17;
+}
+
+.theme-preview-colors {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.theme-preview-colors span {
+    width: 27px;
+    height: 27px;
+    display: block;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+#themePreviewName {
+    color: #ffffff;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.theme-preset-preview > span {
+    width: 100%;
+    color: #9290a6;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+/* Main Appearance Preview */
+
+.appearance-preview {
+    background-color: var(--preview-panel, #171327);
+    border-color: var(--preview-border, #34304a);
+    color: var(--preview-text, #f1efff);
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Midnight Background */
+
+.appearance-preview[data-background="midnight"] {
+    background-image: none;
+}
+
+/* Dark Background */
+
+.appearance-preview[data-background="dark"] {
+    background-image: linear-gradient(
+        var(--preview-bg),
+        var(--preview-bg)
+    );
+}
+
+/* Cyber Gradient Background */
+
+.appearance-preview[data-background="gradient"] {
+    background-image: linear-gradient(
+        135deg,
+        var(--preview-bg),
+        var(--preview-panel)
+    );
+}
+
+/* Preview Text */
+
+.appearance-preview h3 {
+    color: var(--preview-primary);
+}
+
+.appearance-preview p {
+    color: var(--preview-text);
+    opacity: 0.8;
+}
+
+/* Preview Logo */
+
+.preview-logo {
+    background: linear-gradient(
+        135deg,
+        var(--preview-accent),
+        var(--preview-primary)
+    );
+}
+
+/* Preview Buttons */
+
+#previewButton {
+    border-color: var(--preview-primary);
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+#previewButton[data-style="gradient"] {
+    color: #070b12;
+    background: linear-gradient(
+        100deg,
+        var(--preview-accent),
+        var(--preview-primary)
+    );
+}
+
+#previewButton[data-style="solid"] {
+    color: #070b12;
+    background: var(--preview-primary);
+}
+
+#previewButton[data-style="outline"] {
+    color: var(--preview-primary);
+    background: transparent;
+    border: 1px solid var(--preview-primary);
+}
+
+/* Preview Glow */
+
+.appearance-preview {
+    box-shadow:
+        0 0 calc(30px * var(--preview-glow, 0.5))
+        color-mix(
+            in srgb,
+            var(--preview-primary),
+            transparent 65%
+        );
+}
+
+/* Theme Select Focus */
+
+#themePreset:focus,
+.setting-card select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.15);
+}
+
+/* Mobile Theme Preview */
+
+@media (max-width: 600px) {
+    .theme-preset-preview {
+        min-height: 80px;
+        padding: 11px;
+        gap: 9px;
+    }
+
+    .theme-preview-colors span {
+        width: 25px;
+        height: 25px;
+    }
+
+    #themePreviewName {
+        font-size: 12px;
+    }
+
+    .appearance-preview {
+        min-height: 180px;
+        padding: 18px 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .theme-preset-preview {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
