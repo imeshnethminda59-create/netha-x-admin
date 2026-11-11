@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: #070b12;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+}
