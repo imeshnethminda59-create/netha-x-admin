@@ -460,16 +460,15 @@ function renderDashboard(user) {
 
 function connectAppearanceControls() {
     const ids = [
-        "themeColor",
-        "accentColor",
-        "backgroundStyle",
-        "buttonStyle",
-        "animations",
-        "glowIntensity",
-        "fallingEffectsEnabled",
-        "effectSpeed",
-        "effectDensity"
-    ];
+    "themePreset",
+    "backgroundStyle",
+    "buttonStyle",
+    "animations",
+    "glowIntensity",
+    "fallingEffectsEnabled",
+    "effectSpeed",
+    "effectDensity"
+];
 
     ids.forEach(id => {
         const element = document.getElementById(id);
@@ -508,43 +507,49 @@ function readSettingsFromControls() {
     ).map(element => element.value);
 
     return {
-        themeColor: document.getElementById("themeColor").value,
-        accentColor: document.getElementById("accentColor").value,
-        backgroundStyle: document.getElementById("backgroundStyle").value,
-        buttonStyle: document.getElementById("buttonStyle").value,
+        const themePreset = document.getElementById("themePreset").value;
+const selectedTheme = THEME_PRESETS[themePreset] ||
+    THEME_PRESETS["netha-original"];
 
-        animations: document.getElementById("animations").checked,
+return {
+    themePreset: themePreset,
 
-        glowIntensity: Number(
-            document.getElementById("glowIntensity").value
+    themeColor: selectedTheme.themeColor,
+    accentColor: selectedTheme.accentColor,
+
+    backgroundStyle: document.getElementById("backgroundStyle").value,
+    buttonStyle: document.getElementById("buttonStyle").value,
+
+    animations: document.getElementById("animations").checked,
+
+    glowIntensity: Number(
+        document.getElementById("glowIntensity").value
+    ),
+
+    fallingEffects: {
+        enabled: document.getElementById(
+            "fallingEffectsEnabled"
+        ).checked,
+
+        types: selectedEffects,
+
+        speed: Number(
+            document.getElementById("effectSpeed").value
         ),
 
-        fallingEffects: {
-            enabled: document.getElementById(
-                "fallingEffectsEnabled"
-            ).checked,
+        density: Number(
+            document.getElementById("effectDensity").value
+        )
+    }
+ };
 
-            types: selectedEffects,
-
-            speed: Number(
-                document.getElementById("effectSpeed").value
-            ),
-
-            density: Number(
-                document.getElementById("effectDensity").value
-            )
-        }
-    };
 }
 
 function applySettings(settings) {
     const merged = normalizeSettings(settings);
 
-    document.getElementById("themeColor").value =
-        merged.themeColor;
-
-    document.getElementById("accentColor").value =
-        merged.accentColor;
+    document.getElementById("themePreset").value =
+    merged.themePreset;
 
     document.getElementById("backgroundStyle").value =
         merged.backgroundStyle;
@@ -616,6 +621,37 @@ function updatePreview() {
     preview.dataset.background = settings.backgroundStyle;
     previewButton.dataset.style = settings.buttonStyle;
 }
+
+const selectedTheme = THEME_PRESETS[settings.themePreset];
+
+document.getElementById("themePreviewPrimary").style.background =
+    selectedTheme.themeColor;
+
+document.getElementById("themePreviewAccent").style.background =
+    selectedTheme.accentColor;
+
+document.getElementById("themePreviewName").textContent =
+    selectedTheme.name;
+
+preview.style.setProperty(
+    "--preview-bg",
+    selectedTheme.background
+);
+
+preview.style.setProperty(
+    "--preview-panel",
+    selectedTheme.panel
+);
+
+preview.style.setProperty(
+    "--preview-border",
+    selectedTheme.border
+);
+
+preview.style.setProperty(
+    "--preview-text",
+    selectedTheme.text
+);
 
 function setSaveMessage(message, isError) {
     const element = document.getElementById("saveMessage");
