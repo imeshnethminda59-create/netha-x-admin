@@ -103,8 +103,14 @@ const THEME_PRESETS = {
 // DEFAULT SETTINGS
 const defaultSettings = {
     themePreset: "netha-original",
+
     themeColor: "#00d9ff",
     accentColor: "#a855f7",
+
+    backgroundColor: "#090713",
+    panelColor: "#171327",
+    borderColor: "#34304a",
+    textColor: "#f1efff",
 
     backgroundStyle: "midnight",
     animations: true,
@@ -162,10 +168,18 @@ function normalizeSettings(settings = {}) {
         ...defaultSettings,
         ...settings,
 
+        // COMPLETE THEME PRESET
         themePreset: themePreset,
+
         themeColor: selectedTheme.themeColor,
         accentColor: selectedTheme.accentColor,
 
+        backgroundColor: selectedTheme.background,
+        panelColor: selectedTheme.panel,
+        borderColor: selectedTheme.border,
+        textColor: selectedTheme.text,
+
+        // BACKGROUND STYLE
         backgroundStyle: [
             "midnight",
             "dark",
@@ -174,6 +188,7 @@ function normalizeSettings(settings = {}) {
             ? settings.backgroundStyle
             : defaultSettings.backgroundStyle,
 
+        // BUTTON STYLE
         buttonStyle: [
             "gradient",
             "solid",
@@ -182,14 +197,17 @@ function normalizeSettings(settings = {}) {
             ? settings.buttonStyle
             : defaultSettings.buttonStyle,
 
+        // ANIMATIONS
         animations: typeof settings.animations === "boolean"
             ? settings.animations
             : defaultSettings.animations,
 
+        // GLOW INTENSITY
         glowIntensity: Number.isFinite(glow)
             ? Math.max(0, Math.min(100, glow))
             : defaultSettings.glowIntensity,
 
+        // FALLING EFFECTS
         fallingEffects: {
             enabled: typeof savedEffects.enabled === "boolean"
                 ? savedEffects.enabled
@@ -656,8 +674,14 @@ function readSettingsFromControls() {
     return {
         themePreset: themePreset,
 
+        // COMPLETE THEME PRESET COLORS
         themeColor: selectedTheme.themeColor,
         accentColor: selectedTheme.accentColor,
+
+        backgroundColor: selectedTheme.background,
+        panelColor: selectedTheme.panel,
+        borderColor: selectedTheme.border,
+        textColor: selectedTheme.text,
 
         backgroundStyle:
             document.getElementById("backgroundStyle").value,
@@ -758,7 +782,7 @@ function updatePreview() {
     document.getElementById("effectDensityValue").textContent =
         `${settings.fallingEffects.density}%`;
 
-    // Theme preview colors
+    // THEME PREVIEW COLORS
     document.getElementById("themePreviewPrimary").style.background =
         selectedTheme.themeColor;
 
@@ -768,7 +792,7 @@ function updatePreview() {
     document.getElementById("themePreviewName").textContent =
         selectedTheme.name;
 
-    // Main preview colors
+    // MAIN PREVIEW COLORS
     preview.style.setProperty(
         "--preview-primary",
         selectedTheme.themeColor
@@ -804,7 +828,7 @@ function updatePreview() {
         settings.glowIntensity / 100
     );
 
-    // Direct preview styling
+    // DIRECT PREVIEW STYLING
     preview.style.backgroundColor = selectedTheme.panel;
     preview.style.color = selectedTheme.text;
     preview.style.borderColor = selectedTheme.border;
